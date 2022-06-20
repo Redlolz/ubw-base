@@ -1,0 +1,46 @@
+#!/bin/php
+<?php
+
+require 'getopt.php';
+
+$optarg = "";
+$remaining_args = 0;
+$optind = 1;
+while (($x = posix_getopt($argc, $argv, "u", $optarg, $optind)) != -1) {
+	switch ($x) {
+		case 'u':
+			break;
+		default:
+			echo "usage: $argv[0] [-u] [file ...]\n";
+			exit(1);
+			break;
+	}
+	$remaining_args++;
+}
+
+$pos_args = array_slice($argv, $optind+1);
+
+if (empty($pos_args)) {
+	while($stdin = fgets(STDIN)) {
+		echo "$stdin";
+	}
+	exit(0);
+}
+
+foreach ($pos_args as $filename) {
+	if (!is_file($filename)) {
+		echo "$argv[0]: No such file or directory\n";
+		exit(1);
+	}
+
+	if (!is_readable($filename)) {
+		echo "$argv[0]: Permission denied\n";
+		exit(1);
+	}
+	
+	$file = fopen($filename, "r");
+	while (!feof($file)) {
+		echo fread($file, 8192);
+	}
+	fclose($file);
+}

@@ -1,0 +1,4 @@
+#!/bin/php
+<?php
+
+echo implode(' ', array_slice($argv, 1)) . "\n";
