@@ -18,8 +18,6 @@ while (($x = posix_getopt($argc, $argv, "u", $optarg, $optind)) != -1) {
 	$remaining_args++;
 }
 
-var_dump($optind);
-
 $pos_args = array_slice($argv, $optind);
 
 if (empty($pos_args)) {
@@ -39,7 +37,7 @@ foreach ($pos_args as $filename) {
 		echo "$argv[0]: Permission denied\n";
 		exit(1);
 	}
-	
+
 	$file = fopen($filename, "r");
 	while (!feof($file)) {
 		echo fread($file, 8192);
