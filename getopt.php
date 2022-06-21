@@ -3,8 +3,6 @@
 
 function posix_getopt($argc, $argv, $optstring, &$optarg, &$optind)
 {
-	// $optarg = "";
-	static $optind = 1;
 	static $optpos = 0;
 
 	# Check if there are any arguments at all

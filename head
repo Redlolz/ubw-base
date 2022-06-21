@@ -3,28 +3,36 @@
 
 require 'getopt.php';
 
+$linecount = 10;
+
 $optarg = "";
 $remaining_args = 0;
 $optind = 1;
-while (($x = posix_getopt($argc, $argv, "u", $optarg, $optind)) != -1) {
+while (($x = posix_getopt($argc, $argv, "n:", $optarg, $optind)) != -1) {
 	switch ($x) {
-		case 'u':
+		case 'n':
+			if (!(int)$optarg) {
+				echo "$argv[0]: invalid number of lines: '$optarg'\n";
+				exit(1);
+			}
+			$linecount = $optarg;
 			break;
 		default:
-			echo "usage: $argv[0] [-u] [file ...]\n";
+			echo "usage: $argv[0] [-n number] [file ...]\n";
 			exit(1);
 			break;
 	}
 	$remaining_args++;
 }
 
-var_dump($optind);
-
 $pos_args = array_slice($argv, $optind);
 
+$count = 0;
+
 if (empty($pos_args)) {
-	while($stdin = fgets(STDIN)) {
+	while($count < $linecount && ($stdin = fgets(STDIN))) {
 		echo "$stdin";
+		$count++;
 	}
 	exit(0);
 }
@@ -41,8 +49,10 @@ foreach ($pos_args as $filename) {
 	}
 	
 	$file = fopen($filename, "r");
-	while (!feof($file)) {
-		echo fread($file, 8192);
+	while (!feof($file) && $count < $linecount) {
+		echo fgets($file);
+		$count++;
 	}
 	fclose($file);
+	exit(0);
 }
