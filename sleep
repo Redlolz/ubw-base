@@ -1,0 +1,9 @@
+#!/bin/php
+<?php
+
+if ($argc != 2) {
+	echo "usage: $argv[0] time\n";
+	exit(1);
+}
+
+sleep($argv[1]);
