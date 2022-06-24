@@ -1,0 +1,61 @@
+#!/bin/php
+<?php
+
+$begin = new DateTime();
+$end = new DateTime();
+
+$begin->setDate($argv[2] ?? $begin->format('Y'), $argv[1] ?? $begin->format('m'), 1);
+$end->setDate($argv[2] ?? $begin->format('Y'), $argv[1] ?? $end->format('m'), 1);
+$end->add(new DateInterval('P' . $end->format("t") - 1 . 'D'));
+
+echo "     " . $begin->format('F') . ' ' . $begin->format('Y') . PHP_EOL;
+echo "Su Mo Tu We Th Fr Sa" . PHP_EOL;
+
+create_cal($begin,$end);
+
+function create_cal($begin, $end)
+{
+    for($i = $begin; $i <= $end; $i->modify('+1 day')) {
+        if(check_if_date_is_today($i)) {
+            echo get_formatted_string("\e[7m", $i) ;
+        } else {
+            echo get_formatted_string("\e[0m", $i);
+        }
+
+        if($i->format('w') == '6') {
+            echo PHP_EOL;
+        }
+    }
+}
+
+function check_if_date_is_today($date)
+{
+    $today = new DateTime();
+
+    if($date->format('m') != $today->format('m') &&
+       $date->format('y') != $today->format('y')) {
+        return false;
+    }
+
+    return $today->format("d") == $date->format("d");
+}
+
+function get_formatted_string($format, $date)
+{
+    if($date->format("d") != "01" && $date->format('w') != '0') {
+        if($date->format("d") > "9") {
+            return "$format " . ltrim( $date->format("d"), '0');
+        }
+        return "$format  " . ltrim( $date->format("d"), '0');
+    }
+
+    if($date->format("d") > "9") {
+        return "$format" . ltrim( $date->format("d"), '0');
+    }
+
+    if($date->format("d") == "01") {
+       return str_pad(ltrim($date->format("d"), '0'), ($date->format("w") * 3) + 2, " ", STR_PAD_LEFT);
+    }
+
+    return "$format " . ltrim( $date->format("d"), '0');
+}
